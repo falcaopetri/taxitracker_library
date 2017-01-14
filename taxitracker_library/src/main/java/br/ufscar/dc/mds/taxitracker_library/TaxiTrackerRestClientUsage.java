@@ -54,7 +54,12 @@ public class TaxiTrackerRestClientUsage {
 
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                Log.e("REST_API", errorResponse.toString());
+                if (errorResponse != null) {
+                    Log.e("REST_API", errorResponse.toString());
+                }
+                else {
+                    Log.e("REST_API", "failed to connect " + statusCode);
+                }
             }
         });
     }
