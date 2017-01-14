@@ -1,15 +1,17 @@
 package br.ufscar.dc.mds.taxitracker_library;
 
-/**
- * Created by petri on 26/12/16.
- */
-
-import com.loopj.android.http.*;
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
 
 public class TaxiTrackerRestClient {
-    private static final String BASE_URL = "http://localhost:5000/api/";
+    private static final String BASE_URL = "http://192.168.1.37:5000/";
 
     private static AsyncHttpClient client = new AsyncHttpClient();
+
+    public static void add_auth_token(String server_token) {
+        client.addHeader("Authorization", "Token " + server_token);
+    }
 
     public static void get(String url, RequestParams params, AsyncHttpResponseHandler responseHandler) {
         client.get(getAbsoluteUrl(url), params, responseHandler);
