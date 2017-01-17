@@ -27,4 +27,5 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile "org.apache.httpcomponents:httpcore:4.3.2"
     compile 'com.loopj.android:android-async-http:1.4.8'
+    compile 'com.google.code.gson:gson:1.7.2'
 }

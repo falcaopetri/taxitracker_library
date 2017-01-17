@@ -1,19 +1,24 @@
 package br.ufscar.dc.mds.taxitracker_library;
 
+import android.content.Context;
 import android.util.Log;
 
+import com.google.gson.Gson;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
 import org.apache.http.Header;
+import org.apache.http.entity.StringEntity;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
+
 
 // Reference: http://loopj.com/android-async-http/
 public class TaxiTrackerRestClientUsage {
-
+    private final static String LOG_TAG = "REST_API";
     TaxiTrackerRestHandler handler;
 
     public TaxiTrackerRestClientUsage(TaxiTrackerRestHandler _handler) {
@@ -30,8 +35,10 @@ public class TaxiTrackerRestClientUsage {
         });
     }
 
-    public void login(String id_token) {
-        RequestParams params = new RequestParams("id_token", id_token);
+    public void login(String id_token, String tipo) {
+        RequestParams params = new RequestParams();
+        params.add("id_token", id_token);
+        params.add("tipo", tipo);
         TaxiTrackerRestClient.post("login/", params, new JsonHttpResponseHandler() {
             @Override
             public void onStart() {
@@ -55,11 +62,29 @@ public class TaxiTrackerRestClientUsage {
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
                 if (errorResponse != null) {
-                    Log.e("REST_API", errorResponse.toString());
+                    Log.e(LOG_TAG + "/login", errorResponse.toString());
+                } else {
+                    Log.e(LOG_TAG + "/login", "failed to connect " + statusCode);
                 }
-                else {
-                    Log.e("REST_API", "failed to connect " + statusCode);
-                }
+            }
+        });
+    }
+
+    public void createRace(Context context, String origem, String destino) throws UnsupportedEncodingException {
+        Corrida corrida = new Corrida(origem, destino);
+
+        Gson gson = new Gson();
+        gson.toJson(corrida);
+
+        TaxiTrackerRestClient.postJSON(context, "corridas/", corrida, new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                Log.d(LOG_TAG + "/createRace", response.toString());
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                Log.e(LOG_TAG + "/createRace", errorResponse.toString());
             }
         });
     }
