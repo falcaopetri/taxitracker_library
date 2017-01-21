@@ -107,7 +107,7 @@ public class TaxiTrackerRestClientUsage {
                     JSONObject obj = null;
                     try {
                         obj = response.getJSONObject(i);
-                        System.out.println(obj.toString());
+                        Log.i(LOG_TAG + "/getPassageiros", obj.toString());
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
