@@ -8,4 +8,6 @@ public interface TaxiTrackerRestHandler {
     void on_login(String access_token);
 
     void on_refresh_info(JSONObject response);
+
+    void on_race_created(JSONObject response);
 }

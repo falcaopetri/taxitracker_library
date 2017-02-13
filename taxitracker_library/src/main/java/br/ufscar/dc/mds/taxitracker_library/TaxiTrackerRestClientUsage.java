@@ -9,7 +9,6 @@ import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
 import org.apache.http.Header;
-import org.apache.http.entity.StringEntity;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -91,6 +90,7 @@ public class TaxiTrackerRestClientUsage {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 Log.d(LOG_TAG + "/createRace", response.toString());
+                handler.on_race_created(response);
             }
 
             @Override
@@ -133,8 +133,36 @@ public class TaxiTrackerRestClientUsage {
     }
 
     public void refreshInfo(Location mLastLocation) {
-        final String PRIVATE_TAG = "motoristas/refresh";
-        TaxiTrackerRestClient.get(PRIVATE_TAG, null, new JsonHttpResponseHandler() {
+        final String PRIVATE_TAG = "motoristas/refresh/";
+        RequestParams params = new RequestParams();
+        if (mLastLocation != null)
+            params.add("curr_pos", mLastLocation.getLatitude() + "," + mLastLocation.getLongitude());
+        TaxiTrackerRestClient.post(PRIVATE_TAG, params, new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                Log.d(LOG_TAG + PRIVATE_TAG, response.toString());
+                handler.on_refresh_info(response);
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                Log.e(LOG_TAG + PRIVATE_TAG, "" + statusCode);
+                throwable.printStackTrace();
+                if (errorResponse != null)
+                    Log.e(LOG_TAG + PRIVATE_TAG, errorResponse.toString());
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                Log.e(LOG_TAG + PRIVATE_TAG, "" + statusCode);
+                throwable.printStackTrace();
+            }
+        });
+    }
+
+    public void refreshPassageiroInfo() {
+        final String PRIVATE_TAG = "passageiros/refresh/";
+        TaxiTrackerRestClient.post(PRIVATE_TAG, null, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 Log.d(LOG_TAG + PRIVATE_TAG, response.toString());
