@@ -1,6 +1,7 @@
 package br.ufscar.dc.mds.taxitracker_library;
 
 import android.content.Context;
+import android.location.Location;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -67,6 +68,16 @@ public class TaxiTrackerRestClientUsage {
                     Log.e(LOG_TAG + "/login", "failed to connect " + statusCode);
                 }
             }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                if (throwable != null) {
+                    Log.e(LOG_TAG + "/login", throwable.getMessage());
+                    throwable.printStackTrace();
+                } else {
+                    Log.e(LOG_TAG + "/login", "failed to connect " + statusCode);
+                }
+            }
         });
     }
 
@@ -116,7 +127,32 @@ public class TaxiTrackerRestClientUsage {
 
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                Log.e("REST_API", errorResponse.toString());
+                Log.e(LOG_TAG, errorResponse.toString());
+            }
+        });
+    }
+
+    public void refreshInfo(Location mLastLocation) {
+        final String PRIVATE_TAG = "motoristas/refresh";
+        TaxiTrackerRestClient.get(PRIVATE_TAG, null, new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                Log.d(LOG_TAG + PRIVATE_TAG, response.toString());
+                handler.on_refresh_info(response);
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                Log.e(LOG_TAG + PRIVATE_TAG, "" + statusCode);
+                throwable.printStackTrace();
+                if (errorResponse != null)
+                    Log.e(LOG_TAG + PRIVATE_TAG, errorResponse.toString());
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                Log.e(LOG_TAG + PRIVATE_TAG, "" + statusCode);
+                throwable.printStackTrace();
             }
         });
     }

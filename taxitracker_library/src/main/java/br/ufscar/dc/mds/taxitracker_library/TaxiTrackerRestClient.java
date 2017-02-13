@@ -1,6 +1,7 @@
 package br.ufscar.dc.mds.taxitracker_library;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.google.gson.Gson;
 import com.loopj.android.http.AsyncHttpClient;
@@ -13,12 +14,15 @@ import org.apache.http.entity.StringEntity;
 import java.io.UnsupportedEncodingException;
 
 public class TaxiTrackerRestClient {
-    private static final String BASE_URL = "http://192.168.1.37:5000/";
+    private static final String BASE_URL = "http://192.168.0.14:5000/";
+    private static final String TAG = "TaxiTrackerRestClient";
 
     private static AsyncHttpClient client = new AsyncHttpClient();
 
     public static void add_auth_token(String server_token) {
         client.addHeader("Authorization", "Token " + server_token);
+        Log.d(TAG, "adding token " + server_token);
+        client.setEnableRedirects(true);
     }
 
     public static void get(String url, RequestParams params, AsyncHttpResponseHandler responseHandler) {
